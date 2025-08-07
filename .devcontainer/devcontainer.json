@@ -1,0 +1,39 @@
+{
+  "name": "Multi-FW App Dev Environment",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "21" // Javaのバージョンを指定
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11" // Pythonのバージョンを指定
+    },
+    "ghcr.io/devcontainers/features/go:1": {
+      "version": "1.21" // Goのバージョンを指定
+    },
+    "ghcr.io/devcontainers/features/rust:1": {}, // Rust のバージョン指定なし（最新の安定版を使用）
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "22" // Node.jsのバージョンを指定
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {} // Dockerコマンドを使えるようにする
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // 各言語の推奨拡張機能
+        "vscjava.vscode-java-pack",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "golang.go",
+        "rust-lang.rust-analyzer",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "Docker.docker"
+      ]
+    }
+  },
+  // コンテナ作成後に実行するコマンド
+  "postCreateCommand": "echo 'Welcome to your custom dev environment!'"
+}
