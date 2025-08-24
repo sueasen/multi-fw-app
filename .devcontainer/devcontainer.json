@@ -24,6 +24,7 @@
       "extensions": [
         // 各言語の推奨拡張機能
         "vscjava.vscode-java-pack",
+        "vmware.vscode-boot-starter",
         "ms-python.python",
         "ms-python.vscode-pylance",
         "golang.go",

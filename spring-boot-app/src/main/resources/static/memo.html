@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>メモ帳</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: auto; padding: 20px; }
+        input, textarea { width: 100%; margin-bottom: 10px; padding: 8px; box-sizing: border-box; }
+        button { padding: 10px 15px; cursor: pointer; }
+        .memo-container { border: 1px solid #ccc; padding: 20px; border-radius: 5px; }
+        .memo-list { list-style: none; padding: 0; }
+        .memo-item { border: 1px solid #eee; padding: 15px; margin-bottom: 10px; }
+        .memo-item h3 { margin: 0 0 10px 0; }
+        .memo-item button { background-color: #ff4d4d; color: white; border: none; float: right;}
+        .error {
+            color: red;
+            margin-bottom: 10px;
+            min-height: 1.2em;
+            overflow-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="memo-container">
+        <p><span id="user-email"></span>でログイン中 <button id="logout-btn">ログアウト</button></p>
+        <div id="error-message" class="error"></div>
+        <h2>新しいメモ</h2>
+        <input type="text" id="memo-title" placeholder="タイトル">
+        <textarea id="memo-content" rows="4" placeholder="内容"></textarea>
+        <button id="create-memo-btn">登録する</button>
+
+        <h2>メモ一覧</h2>
+        <ul id="memo-list" class="memo-list"></ul>
+    </div>
+
+    <script>
+        // --- トークン管理 ---
+        const sessionData = JSON.parse(localStorage.getItem('user_session'));
+
+        // --- エラー表示 ---
+        const showError = (message) => {
+            document.getElementById('error-message').textContent = message;
+        };
+
+        // --- ログアウト処理 ---
+        document.getElementById('logout-btn').onclick = async () => {
+            localStorage.removeItem('user_session');
+            window.location.href = '/index.html';
+        };
+
+        // --- API通信ロジック ---
+        const apiFetch = async (url, options = {}) => {
+            const headers = {
+                'Content-Type' : 'application/json',
+                'Authorization' : `Bearer ${sessionData.access_token}`,
+            };
+            const response = await fetch(url, { ...options, headers });
+
+            if ([401, 403].includes(response.status)) {
+                localStorage.removeItem('user_session');
+                alert('セッションが切れました。再度ログインしてください。');
+                window.location.href = '/index.html';
+                throw new Error('Unauthorized');
+            }
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error('APIリクエストに失敗しました. ' + errorData.error);
+            }
+            return response.json();
+        };
+
+        // --- メモ取得処理 ---
+        const fetchMemos = async () => {
+            try {
+                const memos = await apiFetch('/api/memos');
+                renderMemos(memos);
+            } catch (error) {
+                if (error.message !== 'Unauthorized') showError(error.message);
+            }
+        };
+
+        // --- メモ作成処理 ---
+        const createMemo = async (title, content) => {
+             try {
+                await apiFetch('/api/memos', {
+                    method: 'POST',
+                    body: JSON.stringify({ title, content })
+                });
+                await fetchMemos();
+             } catch (error) {
+                if (error.message !== 'Unauthorized') showError(error.message);
+             }
+        };
+
+        // --- メモ削除処理 ---
+        const deleteMemo = async (id) => {
+             if (!confirm('本当にこのメモを削除しますか？')) return;
+             try {
+                await apiFetch(`/api/memos/${id}`, { method: 'DELETE' });
+                await fetchMemos();
+             } catch (error) {
+                if (error.message !== 'Unauthorized') showError(error.message);
+             }
+        };
+        
+        // --- メモ登録 ---
+        document.getElementById('create-memo-btn').onclick = async () => {
+            showError('');
+            const title = document.getElementById('memo-title').value;
+            const content = document.getElementById('memo-content').value;
+            createMemo(title, content);
+            document.getElementById('memo-title').value = '';
+            document.getElementById('memo-content').value = '';
+        };
+
+        // --- メモ一覧表示 ---
+        const renderMemos = (memos) => {
+            const memoList = document.getElementById('memo-list');
+            memoList.innerHTML = '';
+            memos.forEach(memo => {
+                const li = document.createElement('li');
+                li.className = 'memo-item';
+                li.innerHTML = `
+                    <button onclick="deleteMemo(${memo.id})">削除</button>
+                    <h3>${memo.title}</h3>
+                    <p>${memo.content}</p>
+                `;
+                memoList.appendChild(li);
+            });
+        };
+
+        // --- ログイン済の確認 (初期表示時) ---
+        (() => {
+            if (!sessionData?.access_token) {
+                localStorage.removeItem('user_session');
+                window.location.href = '/index.html';
+                return;
+            }
+            document.getElementById('user-email').textContent = sessionData.user?.email;
+            fetchMemos();
+        })();
+    </script>
+</body>
+</html>
