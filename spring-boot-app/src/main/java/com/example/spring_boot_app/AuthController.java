@@ -61,12 +61,12 @@ public class AuthController {
 
     /**
      * アカウント情報を取得します
-     * @param request アカウント情報
-     * @param uriBuilder URI構築
+     * @param authorizationHeader Authorizationヘッダ
+     * @return アカウント情報
      */
-    @PostMapping("/user")
-    public ResponseEntity<Map<String, Object>> authUser(@RequestBody AuthRequest request) {
-        Map<String, Object> user = supabaseAuthService.getUserByAccessToken(request.getAccessToken());
+    @GetMapping("/user")
+    public ResponseEntity<Map<String, Object>> authUser(@RequestHeader("Authorization") String authorizationHeader) {
+        Map<String, Object> user = supabaseAuthService.getUserByAccessToken(authorizationHeader.substring(7));
         return ResponseEntity.ok(Map.of("email", user.get("email")));
     }
 }
