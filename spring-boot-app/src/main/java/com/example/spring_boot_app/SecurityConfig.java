@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -23,7 +24,19 @@ public class SecurityConfig {
     private SupabaseAuthFilter supabaseAuthFilter;
 
     /**
-     * アプリケーションのセキュリティ設定を行います
+     * セキュリティチェックを完全除外にする設定を行います
+     * - 静的リソースを完全除外
+     *
+     * @param http HttpSecurity設定オブジェクト
+     * @return SecurityFilterChain
+     */
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().requestMatchers("/assets/**", "/favicon.ico");
+    }
+
+    /**
+     * アプリケーション全体のセキュリティ設定を行います
      * - CORS（クロスオリジンリソースシェアリング:他オリジンからのアクセス）を有効化
      * - CSRF（クロスサイトリクエストフォージェリ:Cookie認証）を無効化
      * - 認証不要なエンドポイント（認証API・静的ファイル）は全て許可
@@ -40,8 +53,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(
-                        "/api/auth/**", 
-                        "/", "/index.html", "/memo.html", "/favicon.ico"
+                        "/", "/index.html", "/memo.html", "/api/auth/**"
                     ).permitAll()
                 .anyRequest().authenticated()
             )

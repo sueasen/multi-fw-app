@@ -3,19 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>ログイン | Spring Boot メモ帳</title>
-    <style>
-        body { font-family: sans-serif; max-width: 400px; margin: 50px auto; padding: 20px; text-align: center; }
-        .auth-container { border: 1px solid #ccc; padding: 30px; border-radius: 5px; }
-        input { width: 100%; margin-bottom: 10px; padding: 10px; box-sizing: border-box; }
-        button { width: 100%; padding: 10px 15px; cursor: pointer; margin-bottom: 10px; }
-        #github-login-btn { background-color: #333; color: white; border: none; }
-        .error {
-            color: red;
-            margin-bottom: 10px;
-            min-height: 1.2em;
-            overflow-wrap: break-word;
-        }
-    </style>
+    <link rel="stylesheet" href="/assets/style.css">
+    <script src="/assets/common.js" defer></script>
+    <script src="/assets/index.js" defer></script>
 </head>
 <body>
     <div class="auth-container">
@@ -28,81 +18,5 @@
         <hr>
         <button id="github-login-btn">GitHubでログイン</button>
     </div>
-
-    <script>
-        // --- UI要素 ---
-        const githubLoginBtn = document.getElementById('github-login-btn');
-
-        // --- エラー表示 ---
-        const showError = (message) => {
-            document.getElementById('error-message').textContent = message;
-        };
-
-        // --- API通信ロジック ---
-        const apiFetch = async (url, options = {}, headers = {}) => {
-            const response = await fetch(url, { ...options, headers: { 'Content-Type': 'application/json', ...headers } });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error);
-            }
-            return response.json();
-        };
-
-        // --- ユーザ登録(メール) ---
-        document.getElementById('signup-btn').onclick = async () => {
-            showError('');
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            try {
-                await apiFetch('/api/auth/register', {
-                    method: 'POST',
-                    body: JSON.stringify({ email, password })
-                });
-                alert('登録リクエストを送信しました。Supabaseから確認メールが届いているか確認してください。');
-            } catch (error) {
-                showError(`ユーザ登録に失敗しました. ${error.message}`);
-            }
-        };
-
-        // --- ログイン(メール) ---
-        document.getElementById('login-btn').onclick = async () => {
-            showError('');
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            try {
-                const sessionData = await apiFetch('/api/auth/login', {
-                    method: 'POST',
-                    body: JSON.stringify({ email, password })
-                });
-                if (!sessionData.access_token || !sessionData.refresh_token) {
-                    throw new Error('トークンが取得できませんでした.');
-                }
-                localStorage.setItem('user_session', JSON.stringify(sessionData));
-                window.location.href = '/memo.html';
-            } catch (error) {
-                showError(`ログインに失敗しました. ${error.message}`);
-            }
-        };
-
-        // --- Github認証 ---
-        document.getElementById('github-login-btn').onclick = async () => {
-            window.location.href = '/api/auth/oauth2/github';
-        };
-
-        // --- ログイン済の確認 (初期表示時) ---
-        (async () => {
-            if (localStorage.getItem('user_session')) {
-                window.location.href = '/memo.html';
-                return;
-            }
-            const sessionData = Object.fromEntries(new URLSearchParams(window.location.hash.substring(1)));
-            const accessToken = sessionData?.access_token;
-            if (!accessToken) return;
-            const userData = await apiFetch('/api/auth/user', {}, { 'Authorization' : `Bearer ${accessToken}` });
-            if (userData.email) sessionData.user = userData;
-            localStorage.setItem('user_session', JSON.stringify(sessionData));
-            window.location.href = '/memo.html';
-        })();
-    </script>
 </body>
 </html>

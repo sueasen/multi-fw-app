@@ -5,10 +5,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import lombok.extern.slf4j.Slf4j;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @ControllerAdvice
@@ -16,11 +18,23 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(WebClientResponseException.class)
     public ResponseEntity<Map<String, String>> handleWebClientResponseExceptions(WebClientResponseException e) {
-        log.error("予期せぬ例外が発生しました", e);
+        log.error("WEBリクエストで例外が発生しました", e);
         return ResponseEntity
             .status(e.getStatusCode())
             .contentType(MediaType.APPLICATION_JSON)
             .body(Map.of("error", e.getResponseBodyAsString()));
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleMethodArgumentNotValidExceptions(MethodArgumentNotValidException e) {
+        log.error("バリデーションで例外が発生しました", e);
+        String errors = e.getBindingResult().getFieldErrors().stream()
+            .map(error -> error.getField() + ": " + error.getDefaultMessage())
+            .collect(Collectors.joining(", "));
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(Map.of("error", errors));
     }
 
     @ExceptionHandler(Exception.class)

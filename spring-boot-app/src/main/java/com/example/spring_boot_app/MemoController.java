@@ -6,8 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.transaction.annotation.Transactional;
-
-
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -36,12 +35,12 @@ public class MemoController {
      * @return 作成したメモ
      */
     @PostMapping
-    public ResponseEntity<Memo> createMemo(@RequestBody Map<String, String> body, Authentication authentication) {
+    public ResponseEntity<Memo> createMemo(@Valid @RequestBody MemoDto memoDto, Authentication authentication) {
         String userId =  authentication.getName();
         Memo newMemo = new Memo();
         newMemo.setUserId(userId);
-        newMemo.setTitle(body.get("title"));
-        newMemo.setContent(body.get("content"));
+        newMemo.setTitle(memoDto.getTitle());
+        newMemo.setContent(memoDto.getContent());
         Memo savedMemo = memoRepository.save(newMemo);
         return new ResponseEntity<>(savedMemo, HttpStatus.CREATED);
     }
@@ -55,14 +54,14 @@ public class MemoController {
      */
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<Memo> updateMemo(@PathVariable Long id, @RequestBody Map<String, String> body, Authentication authentication) {
+    public ResponseEntity<Memo> updateMemo(@PathVariable Long id, @Valid @RequestBody MemoDto memoDto, Authentication authentication) {
         String userId = authentication.getName();
         Memo memo = memoRepository.findByIdAndUserId(id, userId);
         if (memo == null) {
             return ResponseEntity.notFound().build();
         }
-        memo.setTitle(body.get("title"));
-        memo.setContent(body.get("content"));
+        memo.setTitle(memoDto.getTitle());
+        memo.setContent(memoDto.getContent());
         Memo updatedMemo = memoRepository.save(memo);
         return ResponseEntity.ok(updatedMemo);
     }
