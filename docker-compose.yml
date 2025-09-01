@@ -1,0 +1,59 @@
+# Docker Composeファイルのバージョンを指定
+version: '3.8'
+
+# servicesセクションに、起動したいコンテナを定義していく
+services:
+  # -------------------------------------------------
+  # Spring Boot アプリケーションサービス
+  # -------------------------------------------------
+  spring-boot-app:
+    # イメージをビルドするための設定
+    build:
+      # Dockerfileがあるディレクトリのパスを指定
+      context: ./spring-boot-app
+      dockerfile: Dockerfile
+    # ビルドされたイメージに付ける名前
+    image: spring-boot-app-compose:latest
+    # コンテナ名
+    container_name: my-spring-app-compose
+    # ポートフォワーディングの設定
+    ports:
+      - "8080:8080"
+    # ★★★ 環境変数の設定 ★★★
+    environment:
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - SUPABASE_JWT_SECRET=${SUPABASE_JWT_SECRET}
+      - TIDB_HOST=${TIDB_HOST}
+      - TIDB_USER=${TIDB_USER}
+      - TIDB_PASSWORD=${TIDB_PASSWORD}
+      - TIDB_DB_NAME=${TIDB_DB_NAME}
+      - TIDB_PORT=${TIDB_PORT}
+    # コンテナがクラッシュした場合などに自動で再起動する設定
+    restart: unless-stopped
+
+  # -------------------------------------------------
+  # 将来のFlaskアプリケーションサービス（例）
+  # -------------------------------------------------
+  # flask-app:
+  #   build:
+  #     context: ./flask-app
+  #   ports:
+  #     - "8000:8000"
+  #   environment:
+  #     - SUPABASE_URL=${SUPABASE_URL}
+  #     # ... 他の共通の環境変数 ...
+  #   restart: unless-stopped
+
+  # -------------------------------------------------
+  # 将来のNext.jsアプリケーションサービス（例）
+  # -------------------------------------------------
+  # nextjs-app:
+  #   build:
+  #     context: ./nextjs-app
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - NEXT_PUBLIC_SUPABASE_URL=${SUPABASE_URL}
+  #     - NEXT_PUBLIC_SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+  #   restart: unless-stopped

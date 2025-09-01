@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- メモ更新処理 ---
     const updateMemo = async (id, title, content) => {
+        showError('');
         if (!confirm('メモを更新しますか？')) return;
         try {
             await apiFetch(`/api/memos/${id}`,
@@ -49,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- メモ削除処理 ---
     const deleteMemo = async (id) => {
+        showError('');
         if (!confirm('メモを削除しますか？')) return;
         try {
             await apiFetch(`/api/memos/${id}`,
