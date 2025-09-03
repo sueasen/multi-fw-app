@@ -24,22 +24,10 @@ public class SecurityConfig {
     private SupabaseAuthFilter supabaseAuthFilter;
 
     /**
-     * セキュリティチェックを完全除外にする設定を行います
-     * - 静的リソースを完全除外
-     *
-     * @param http HttpSecurity設定オブジェクト
-     * @return SecurityFilterChain
-     */
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers("/assets/**", "/favicon.ico");
-    }
-
-    /**
      * アプリケーション全体のセキュリティ設定を行います
      * - CORS（クロスオリジンリソースシェアリング:他オリジンからのアクセス）を有効化
      * - CSRF（クロスサイトリクエストフォージェリ:Cookie認証）を無効化
-     * - 認証不要なエンドポイント（認証API・静的ファイル）は全て許可
+     * - 認証不要なエンドポイント（静的ファイル・認証API）は全て許可
      * - それ以外のリクエストは認証必須
      * - Supabase認証フィルターをSpringSecurityの認証フィルター前に追加
      *
@@ -53,7 +41,8 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(
-                        "/", "/index.html", "/memo.html", "/api/auth/**"
+                        "/", "/*.html", "/*.css", "/*.js", "/favicon.ico"
+                        , "/api/auth/**"
                     ).permitAll()
                 .anyRequest().authenticated()
             )
