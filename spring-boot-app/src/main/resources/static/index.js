@@ -1,4 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
+
+    // --- パスワード表示・非表示切替 ---
+    document.getElementById('password').addEventListener('dblclick', (e) => {
+        e.currentTarget.type = e.currentTarget.type === 'password' ? 'text' : 'password';
+    });
     
     // --- ユーザ登録(メール) ---
     document.getElementById('signup-btn').onclick = async () => {
