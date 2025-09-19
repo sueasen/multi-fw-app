@@ -35,6 +35,6 @@
       ]
     }
   },
-  // コンテナ作成後に実行するコマンド
-  "postCreateCommand": "echo 'Welcome to your custom dev environment!'"
+  // コンテナ作成後に実行するコマンド(実行シェル指定)
+  "postCreateCommand": "./devcontainer/post-create-command.sh"
 }
