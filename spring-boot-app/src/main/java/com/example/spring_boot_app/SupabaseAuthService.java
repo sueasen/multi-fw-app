@@ -12,15 +12,8 @@ import java.util.Map;
 @Service
 public class SupabaseAuthService {
 
-    @Value("${supabase.url}")
-    private String supabaseUrl;
-
-    @Value("${supabase.anon-key}")
-    private String supabaseAnonKey;
-
     @Autowired
     private WebClient webClient;
-
 
     /**
      * Eメール/パスワードを使ってSupabase認証を行います
