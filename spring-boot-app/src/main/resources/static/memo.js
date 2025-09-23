@@ -6,8 +6,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- ログアウト処理 ---
     document.getElementById('logout-btn').onclick = async () => {
-        localStorage.removeItem('user_session');
-        window.location.href = '/index.html';
+        try {
+            await apiFetch('/api/auth/logout', { method: 'POST' }, accessToken);
+            localStorage.removeItem('user_session');
+            window.location.href = '/index.html';
+        } catch (error) {
+            showError(error.message);
+        }
     };
 
     // --- メモ取得処理 ---

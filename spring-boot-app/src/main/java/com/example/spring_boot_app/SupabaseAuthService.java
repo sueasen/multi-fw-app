@@ -12,6 +12,9 @@ import java.util.Map;
 @Service
 public class SupabaseAuthService {
 
+    @Value("${supabase.url}")
+    private String supabaseUrl;
+
     @Autowired
     private WebClient webClient;
 
@@ -75,4 +78,18 @@ public class SupabaseAuthService {
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
                 .block();
     }
+
+    /**
+     * アクセストークンよりログアウトを行います
+     * @param accessToken アクセストークン
+     */
+    public void logout(String accessToken) {
+        webClient.post()
+            .uri("/auth/v1/logout")
+            .header("Authorization", "Bearer " + accessToken)
+            .retrieve()
+            .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+            .block();
+    }
+
 }

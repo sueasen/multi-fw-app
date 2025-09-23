@@ -69,4 +69,15 @@ public class AuthController {
         Map<String, Object> user = supabaseAuthService.getUserByAccessToken(authorizationHeader.substring(7));
         return ResponseEntity.ok(Map.of("email", user.get("email")));
     }
+
+    /**
+     * ログアウトを行います
+     * @param authorizationHeader Authorizationヘッダ
+     * @return 実行結果
+     */
+    @PostMapping("/logout")
+   public ResponseEntity<Map<String, Object>> logout(@RequestHeader("Authorization") String authorizationHeader) {
+        supabaseAuthService.logout(authorizationHeader.substring(7));
+        return ResponseEntity.ok(Map.of("message", "Logout successful."));
+    }
 }
