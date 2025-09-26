@@ -58,7 +58,7 @@
     ```
 3.  flask-app 実行
     ```bash
-    python app.py
+    python ./src/app.py
     ```
 4.  起動が完了すると、コンソールに以下が表示
     ```bash
