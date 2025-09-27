@@ -17,7 +17,7 @@
     # 停止/削除
     docker compose down
     # 指定コンテナ削除 (引数にサービス名追加でサービス指定して実行)
-    docker rm -f サービス名
+    docker compose rm サービス名
     ```
 
 ## spring-boot-app
@@ -73,7 +73,7 @@
     # 停止/削除
     docker compose down
     ```
-    
+
 ## flask-app
 ### 通常実行
 1.  Codespaces のターミナル開く
