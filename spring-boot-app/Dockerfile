@@ -17,7 +17,7 @@ RUN mvn dependency:go-offline
 # アプリケーションのソースコードをコピー
 COPY src ./src
 
-# Mavenを使ってアプリケーションをビルｇドし、実行可能なJARファイルを作成する
+# Mavenを使ってアプリケーションをビルドし、実行可能なJARファイルを作成する
 RUN mvn package -DskipTests
 
 
