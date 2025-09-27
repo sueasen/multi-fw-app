@@ -35,18 +35,40 @@ public class AuthController {
     }
 
     /**
+     * アカウント情報を取得します
+     * @param authorizationHeader Authorizationヘッダ
+     * @return アカウント情報
+     */
+    @GetMapping("/user")
+    public ResponseEntity<Map<String, Object>> authUser(@RequestHeader("Authorization") String authorizationHeader) {
+        Map<String, Object> user = supabaseAuthService.getUserByAccessToken(authorizationHeader.substring(7));
+        return ResponseEntity.ok(Map.of("email", user.get("email")));
+    }
+
+    /**
      * ログインを行います
      * @param request アカウント情報
      * @return 実行結果
      */
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody AuthRequest request) {
-        Map<String, Object> result = supabaseAuthService.signInWithPassword(request.getEmail(), request.getPassword());
+        Map<String, Object> result = supabaseAuthService.loginWithPassword(request.getEmail(), request.getPassword());
         return result.containsKey("access_token")
                 ? ResponseEntity.ok(result)
                 : ResponseEntity.badRequest().body(result);
     }
 
+   /**
+     * ログアウトを行います
+     * @param authorizationHeader Authorizationヘッダ
+     * @return 実行結果
+     */
+    @PostMapping("/logout")
+   public ResponseEntity<Map<String, Object>> logout(@RequestHeader("Authorization") String authorizationHeader) {
+        supabaseAuthService.logout(authorizationHeader.substring(7));
+        return ResponseEntity.ok(Map.of("message", "Logout successful."));
+    }
+    
     /**
      * Github認証にリダイレクトします
      * @param response HTTPレスポンス
@@ -59,25 +81,4 @@ public class AuthController {
         response.sendRedirect(supabaseAuthGitHubUrl);
     }
 
-    /**
-     * アカウント情報を取得します
-     * @param authorizationHeader Authorizationヘッダ
-     * @return アカウント情報
-     */
-    @GetMapping("/user")
-    public ResponseEntity<Map<String, Object>> authUser(@RequestHeader("Authorization") String authorizationHeader) {
-        Map<String, Object> user = supabaseAuthService.getUserByAccessToken(authorizationHeader.substring(7));
-        return ResponseEntity.ok(Map.of("email", user.get("email")));
-    }
-
-    /**
-     * ログアウトを行います
-     * @param authorizationHeader Authorizationヘッダ
-     * @return 実行結果
-     */
-    @PostMapping("/logout")
-   public ResponseEntity<Map<String, Object>> logout(@RequestHeader("Authorization") String authorizationHeader) {
-        supabaseAuthService.logout(authorizationHeader.substring(7));
-        return ResponseEntity.ok(Map.of("message", "Logout successful."));
-    }
 }

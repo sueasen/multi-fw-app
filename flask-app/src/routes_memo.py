@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request, g
 from models import db, Memo
 from datetime import datetime
 
+# メモ操作ルーティング
 bp_memo = Blueprint("memo", __name__)
 
 # DB例外処理デコレータ

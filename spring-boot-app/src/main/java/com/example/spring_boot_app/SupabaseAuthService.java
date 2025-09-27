@@ -19,22 +19,6 @@ public class SupabaseAuthService {
     private WebClient webClient;
 
     /**
-     * Eメール/パスワードを使ってSupabase認証を行います
-     * @param email Eメール
-     * @param password パスワード
-     * @return 認証結果
-     */
-    public Map<String, Object> signInWithPassword(String email, String password) {
-        return webClient.post()
-                .uri("/auth/v1/token?grant_type=password")
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(Map.of("email", email, "password", password))
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
-                .block();
-    }
-    
-    /**
      * Eメール/パスワードを使ってSupabase認証のアカウント登録を行います
      * @param email Eメール
      * @param password パスワード
@@ -52,20 +36,6 @@ public class SupabaseAuthService {
     }
 
     /**
-     * SupabaseのGitHub認証を開始するためのURLを取得する
-     * @param redirectTo アカウント認証時にコールバックするリダイレクトURL
-     * @return SupabaseのGitHub認証URL
-     */
-    public String getGitHubSignInUrl(String redirectTo) {
-        return UriComponentsBuilder.fromHttpUrl(this.supabaseUrl)
-                .path("/auth/v1/authorize")
-                .queryParam("provider", "github")
-                .queryParam("redirect_to", redirectTo)
-                .queryParam("scopes", "user:email")
-                .toUriString();
-    }
-
-    /**
      * アクセストークンより Supabase のアカウント情報を取得する
      * @param accessToken アクセストークン
      * @return アカウント情報
@@ -80,6 +50,22 @@ public class SupabaseAuthService {
     }
 
     /**
+     * Eメール/パスワードを使ってSupabase認証を行います
+     * @param email Eメール
+     * @param password パスワード
+     * @return 認証結果
+     */
+    public Map<String, Object> loginWithPassword(String email, String password) {
+        return webClient.post()
+                .uri("/auth/v1/token?grant_type=password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(Map.of("email", email, "password", password))
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+                .block();
+    }
+    
+    /**
      * アクセストークンよりログアウトを行います
      * @param accessToken アクセストークン
      */
@@ -90,6 +76,20 @@ public class SupabaseAuthService {
             .retrieve()
             .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
             .block();
+    }
+
+    /**
+     * SupabaseのGitHub認証を開始するためのURLを取得する
+     * @param redirectTo アカウント認証時にコールバックするリダイレクトURL
+     * @return SupabaseのGitHub認証URL
+     */
+    public String getGitHubSignInUrl(String redirectTo) {
+        return UriComponentsBuilder.fromHttpUrl(this.supabaseUrl)
+                .path("/auth/v1/authorize")
+                .queryParam("provider", "github")
+                .queryParam("redirect_to", redirectTo)
+                .queryParam("scopes", "user:email")
+                .toUriString();
     }
 
 }
