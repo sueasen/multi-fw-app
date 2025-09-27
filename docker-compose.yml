@@ -1,49 +1,36 @@
-# Docker Composeファイルのバージョンを指定
+# Docker Compose バージョン指定
 version: '3.8'
 
-# servicesセクションに、起動したいコンテナを定義していく
 services:
-  # -------------------------------------------------
-  # Spring Boot アプリケーションサービス
-  # -------------------------------------------------
   spring-boot-app:
-    # イメージをビルドするための設定
     build:
-      # Dockerfileがあるディレクトリのパスを指定
       context: ./spring-boot-app
       dockerfile: Dockerfile
-    # ビルドされたイメージに付ける名前
-    image: spring-boot-app-compose:latest
-    # コンテナ名
-    container_name: my-spring-app-compose
-    # ポートフォワーディングの設定
+    container_name: spring-boot-app
     ports:
       - "8080:8080"
-    # ★★★ 環境変数の設定 ★★★
-    environment:
-      - SUPABASE_URL=${SUPABASE_URL}
-      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
-      - SUPABASE_JWT_SECRET=${SUPABASE_JWT_SECRET}
-      - TIDB_HOST=${TIDB_HOST}
-      - TIDB_USER=${TIDB_USER}
-      - TIDB_PASSWORD=${TIDB_PASSWORD}
-      - TIDB_DB_NAME=${TIDB_DB_NAME}
-      - TIDB_PORT=${TIDB_PORT}
-    # コンテナがクラッシュした場合などに自動で再起動する設定
+    env_file:
+      - .env
     restart: unless-stopped
+    networks:
+      - backend
 
-  # -------------------------------------------------
-  # 将来のFlaskアプリケーションサービス（例）
-  # -------------------------------------------------
-  # flask-app:
-  #   build:
-  #     context: ./flask-app
-  #   ports:
-  #     - "8000:8000"
-  #   environment:
-  #     - SUPABASE_URL=${SUPABASE_URL}
-  #     # ... 他の共通の環境変数 ...
-  #   restart: unless-stopped
+  flask-app:
+    build:
+      context: ./flask-app
+      dockerfile: Dockerfile
+    container_name: flask-app
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    restart: unless-stopped
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
 
   # -------------------------------------------------
   # 将来のNext.jsアプリケーションサービス（例）
@@ -57,3 +44,5 @@ services:
   #     - NEXT_PUBLIC_SUPABASE_URL=${SUPABASE_URL}
   #     - NEXT_PUBLIC_SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
   #   restart: unless-stopped
+  #   depends_on:
+  #     - flask-app

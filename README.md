@@ -1,4 +1,25 @@
 # multi-fw-app
+## 共通実行
+### docker-compose
+1.  Codespaces のターミナル開く
+2.  プロジェクト直下(multi-fw-app) に移動
+    ```bash
+    cd /workspaces/multi-fw-app
+    ```
+3.  docker compose を実行
+    ```bash
+    # ビルド＆起動 (引数にサービス名追加でサービス指定して実行)
+    docker compose up --build -d
+    # 起動 (引数にサービス名追加でサービス指定して実行)
+    docker compose up -d
+    # ログ確認 (引数にサービス名追加でサービス指定して実行)
+    docker compose logs -f サービス名
+    # 停止/削除
+    docker compose down
+    # 指定コンテナ削除 (引数にサービス名追加でサービス指定して実行)
+    docker rm -f サービス名
+    ```
+
 ## spring-boot-app
 ### 通常実行
 1.  Codespaces のターミナル開く
@@ -37,7 +58,10 @@
     ```
 ### docker-compose
 1.  Codespaces のターミナル開く
-2.  プロジェクト直下のディレクトリに移動
+2.  spring-boot-app ディレクトリに移動
+    ```bash
+    cd spring-boot-app
+    ```
 3.  docker compose を実行
     ```bash
     # ビルド＆起動
@@ -49,6 +73,7 @@
     # 停止/削除
     docker compose down
     ```
+    
 ## flask-app
 ### 通常実行
 1.  Codespaces のターミナル開く
@@ -95,4 +120,21 @@
 3.  gunicorn 実行
     ```bash
     PYTHONPATH=src gunicorn src.app:app --bind 0.0.0.0:5000
+    ```
+### docker-compose
+1.  Codespaces のターミナル開く
+2.  flask-app ディレクトリに移動
+    ```bash
+    cd flask-app
+    ```
+3.  docker compose を実行
+    ```bash
+    # ビルド＆起動
+    docker compose up --build -d
+    # 起動
+    docker compose up -d
+    # ログ確認
+    docker compose logs -f flask-app
+    # 停止/削除
+    docker compose down
     ```
