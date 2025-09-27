@@ -12,9 +12,11 @@ def auth_filter():
     ]
     if any(fnmatch(request.path, pattern) for pattern in excluded_patterns):
         return
+
     auth_header = request.headers.get("Authorization", "")
     if not auth_header.startswith("Bearer "):
         return jsonify({"error": "Unauthorized"}), 401
+        
     supabase_result, status_code = supabase_auth_service.get_user_by_access_token(access_token=auth_header[7:])
     if not supabase_result.get("id"):
         return jsonify({"error": "Unauthorized"}), 401

@@ -41,7 +41,7 @@ def create_memo():
     db.session.add(memo)
     db.session.commit()
     result = {c.name: getattr(memo, c.name) for c in Memo.__table__.columns}
-    return jsonify(result), 201
+    return jsonify(result), 200
 
 # メモ更新
 @bp_memo.route("/api/memos/<int:id>", methods=["PUT"])

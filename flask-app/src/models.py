@@ -1,8 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
+# DB初期化
 db = SQLAlchemy()
 
+# メモモデル
 class Memo(db.Model):
     __tablename__ = "memos"
     id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
