@@ -1,6 +1,3 @@
-# Docker Compose バージョン指定
-version: '3.8'
-
 services:
   spring-boot-app:
     build:

@@ -1,5 +1,5 @@
-# Java イメージ
-FROM eclipse-temurin:21-jdk-jammy
+# Maven + Java イメージ
+FROM maven:3.9.11-eclipse-temurin-21
 
 # 作業ディレクトリ設定
 WORKDIR /app
@@ -8,16 +8,16 @@ WORKDIR /app
 COPY pom.xml ./
 
 # 依存ライブラリインストール
-RUN apt-get update && apt-get install -y maven && mvn dependency:go-offline
+RUN mvn dependency:go-offline
 
 # モジュールコピー
 COPY ./src ./src
 
-# Maveビルド（テストスキップ）
-RUN mvn package -DskipTests
+# Mavenビルド（テストスキップ）, jar 移動・リネーム
+RUN mvn package -DskipTests && mv target/*.jar app.jar
 
 # SpringBootアプリ起動
-CMD ["java", "-jar", "target/spring-boot-app-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "app.jar"]
 
 # ポート公開
 EXPOSE 8080
