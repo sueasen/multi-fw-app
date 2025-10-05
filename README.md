@@ -14,8 +14,9 @@
     docker compose up -d
     # ログ確認 (引数にサービス名追加でサービス指定して実行)
     docker compose logs -f サービス名
-    # 停止/削除
+    # 停止/削除 ※ --remove-orphans で孤立したコンテナも対象
     docker compose down
+    docker compose down --remove-orphans
     # 指定コンテナ削除 (引数にサービス名追加でサービス指定して実行)
     docker compose rm サービス名
     ```
