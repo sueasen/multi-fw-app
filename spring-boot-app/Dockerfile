@@ -27,6 +27,3 @@ COPY --from=build /app/target/*.jar ./app.jar
 
 # SpringBootアプリ起動
 CMD ["java", "-jar", "app.jar"]
-
-# ポート公開
-EXPOSE 8080
