@@ -3,16 +3,12 @@ import requests
 from typing import Dict, Any, Tuple
 
 class SupabaseAuthService:
-    def __init__(self):
-        self.url = Config.SUPABASE_URL
-        self.anon_key = Config.SUPABASE_ANON_KEY
-
     # APIリクエスト処理
     def api_request(self, method: str, path: str, data: Dict[str, Any] = None, access_token: str = None) -> Tuple[Dict[str, Any], int]:
-        headers = {"apikey": self.anon_key, "Content-Type": "application/json"}
+        headers = {"apikey": Config.SUPABASE_ANON_KEY, "Content-Type": "application/json"}
         if access_token:
             headers["Authorization"] = f"Bearer {access_token}"
-        url = f"{self.url}{path}"
+        url = f"{Config.SUPABASE_URL}{path}"
         try:
             if method.upper() == "POST":
                 response = requests.post(url, headers=headers, json=data)
@@ -45,4 +41,4 @@ class SupabaseAuthService:
 
     # GitHub認証用URL取得
     def get_github_signin_url(self, redirect_to: str) -> str:
-        return f"{self.url}/auth/v1/authorize?provider=github&redirect_to={redirect_to}&scopes=user:email"
+        return f"{Config.SUPABASE_URL}/auth/v1/authorize?provider=github&redirect_to={redirect_to}&scopes=user:email"
