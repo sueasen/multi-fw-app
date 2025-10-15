@@ -84,7 +84,7 @@ public class SupabaseAuthService {
      * @return SupabaseのGitHub認証URL
      */
     public String getGitHubSignInUrl(String redirectTo) {
-        return UriComponentsBuilder.fromHttpUrl(this.supabaseUrl)
+        return UriComponentsBuilder.fromUriString(this.supabaseUrl)
                 .path("/auth/v1/authorize")
                 .queryParam("provider", "github")
                 .queryParam("redirect_to", redirectTo)
