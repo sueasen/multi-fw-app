@@ -7,8 +7,10 @@ from routes_auth import bp_auth
 from routes_memo import bp_memo
 from models import db
 
-# Flaskアプリケーション初期化
+# Flaskアプリケーション初期化, 静的ファイル設定
 app = Flask(__name__, static_folder="static", static_url_path="")
+
+# CORS設定
 CORS(
     app,
     resources={r"/api/*": {"origins": ["http://localhost:8080", "http://localhost:3000"]}},
