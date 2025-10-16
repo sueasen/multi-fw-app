@@ -139,3 +139,20 @@
     # 停止/削除
     docker compose down
     ```
+## gin-app
+### 通常実行
+1.  Codespaces のターミナル開く
+2.  gin-app ディレクトリに移動
+    ```bash
+    cd gin-app
+    ```
+3.  gin 実行
+    ```bash
+    go run main.go
+    ```
+4.  ビルドと起動が完了すると、コンソールに以下が表示
+    ```bash
+    Server started on http://localhost:8180
+    ```
+5.  Codespacesが自動的にポート8180を転送し、右下にポップアップが表示されるので「**ブラウザで開く**」をクリック
+6.  ブラウザで `https://xxxyyyzzz-8180.app.github.dev`（ポートで確認）にアクセス、ログイン画面が表示
