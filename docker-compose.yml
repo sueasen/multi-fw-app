@@ -1,3 +1,4 @@
 include:
   - spring-boot-app/docker-compose.yml
   - flask-app/docker-compose.yml
+  - gin-app/docker-compose.yml

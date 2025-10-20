@@ -1,11 +1,11 @@
 package src
 
 import (
-    "time"
+	"time"
 
-    "gorm.io/gorm"
-    "gorm.io/driver/mysql"
-    "gorm.io/gorm/logger"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 // DB初期化（TiDB接続）
