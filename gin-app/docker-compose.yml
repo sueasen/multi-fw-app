@@ -1,0 +1,10 @@
+services:
+  gin-app:
+    build:
+      context: .
+    container_name: gin-app
+    ports:
+      - "8180:8180"
+    env_file:
+      - ../.env
+    restart: unless-stopped
