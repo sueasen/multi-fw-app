@@ -35,6 +35,3 @@ tmp/
 
 # Coverage files
 coverage.out
-
-# Module cache
-/go.sum
