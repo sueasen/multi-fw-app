@@ -27,7 +27,7 @@ func init() {
 // newConfig: 環境変数から設定値を取得
 func newConfig() *AppConfig {
 	config := &AppConfig{
-		ServerPort:      getEnv("SERVER_PORT", "5000"),
+		ServerPort:      "8180",
 		SupabaseURL:     getEnv("SUPABASE_URL", ""),
 		SupabaseAnonKey: getEnv("SUPABASE_ANON_KEY", ""),
 		TiDBUser:        getEnv("TIDB_USER", ""),

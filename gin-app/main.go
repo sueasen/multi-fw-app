@@ -2,11 +2,10 @@ package main
 
 import (
 	"log"
-	"os"
 
-	"example.com/gin-app/src"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"example.com/gin-app/src"
 )
 
 func main() {
@@ -43,11 +42,7 @@ func main() {
 	// メモAPIルーティング登録
 	src.RegisterMemoRoutes(router)
 
-	var port string = os.Getenv("PORT")
-	if port == "" {
-		port = "8180"
-	}
-	// ポート8180で起動
+	var port string = src.Config.ServerPort
 	log.Println("Server started on http://localhost:" + port)
 	router.Run(":" + port)
 }
