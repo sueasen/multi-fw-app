@@ -158,7 +158,7 @@
 6.  ブラウザで `https://xxxyyyzzz-8180.app.github.dev`（ポートで確認）にアクセス、ログイン画面が表示
 ### docker-compose
 1.  Codespaces のターミナル開く
-2.  flask-app ディレクトリに移動
+2.  gin-app ディレクトリに移動
     ```bash
     cd gin-app
     ```
