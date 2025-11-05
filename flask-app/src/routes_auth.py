@@ -64,7 +64,6 @@ def redirect_to_github() -> Response:
 def base_host_url() -> str:
     host = request.headers.get("X-Forwarded-Host") or request.headers.get("Host")
     scheme = (request.headers.get("X-Forwarded-Proto")
-              or request.headers.get("X-Forwarded-Scheme")
               or request.scheme)
     logger.info("base_host_url host=%s scheme=%s", host, scheme)
     return f"{scheme}://{host}/"

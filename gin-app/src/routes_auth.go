@@ -1,8 +1,9 @@
 package src
 
 import (
+	"fmt"
+	"log"
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,13 +14,32 @@ type AuthForm struct {
 	Password string `json:"password"`
 }
 
+func baseHostURL(c *gin.Context) string {
+	host := c.GetHeader("X-Forwarded-Host")
+	if host == "" {
+		host = c.Request.Host
+	}
+	scheme := c.GetHeader("X-Forwarded-Proto")
+	if scheme == "" {
+		if c.Request.TLS != nil {
+			scheme = "https"
+		} else {
+			scheme = "http"
+		}
+	}
+	log.Printf("base_host_url c.Request.Host=%s", c.Request.Host)
+	log.Printf("base_host_url c.Request.TLS=%v", c.Request.TLS)
+	log.Printf("base_host_url host=%s scheme=%s", host, scheme)
+	return fmt.Sprintf("%s://%s/", scheme, host)
+}
+
 // 認証ルーティングを登録する関数
 func RegisterAuthRoutes(router *gin.Engine) {
 	// アカウント登録
 	router.POST("/api/auth/register", func(c *gin.Context) {
 		var form AuthForm
 		c.ShouldBindJSON(&form)
-		redirectTo := strings.TrimRight(c.Request.Host, "/") + "/"
+		redirectTo := baseHostURL(c)
 		result, _ := Signup(form.Email, form.Password, redirectTo)
 		if result["id"] != nil {
 			c.JSON(http.StatusOK, gin.H{"message": "Registration successful. Please check your email for confirmation."})
@@ -52,7 +72,7 @@ func RegisterAuthRoutes(router *gin.Engine) {
 
 	// GitHub認証リダイレクト
 	router.GET("/api/auth/oauth2/github", func(c *gin.Context) {
-		redirectTo := strings.TrimRight(c.Request.Host, "/") + "/"
+		redirectTo := baseHostURL(c)
 		githubURL := GetGithubSigninURL(redirectTo)
 		c.Redirect(http.StatusFound, githubURL)
 	})

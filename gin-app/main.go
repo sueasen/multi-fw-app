@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
+	"example.com/gin-app/src"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"example.com/gin-app/src"
 )
 
 func main() {
