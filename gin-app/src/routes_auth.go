@@ -14,6 +14,7 @@ type AuthForm struct {
 	Password string `json:"password"`
 }
 
+// baseHostUrlの作成
 func baseHostURL(c *gin.Context) string {
 	host := c.GetHeader("X-Forwarded-Host")
 	if host == "" {
@@ -27,8 +28,6 @@ func baseHostURL(c *gin.Context) string {
 			scheme = "http"
 		}
 	}
-	log.Printf("base_host_url c.Request.Host=%s", c.Request.Host)
-	log.Printf("base_host_url c.Request.TLS=%v", c.Request.TLS)
 	log.Printf("base_host_url host=%s scheme=%s", host, scheme)
 	return fmt.Sprintf("%s://%s/", scheme, host)
 }
