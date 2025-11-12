@@ -1,11 +1,13 @@
 package src
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 // メモ入力フォーム
@@ -24,6 +26,17 @@ func BindMemoForm(c *gin.Context) *MemoForm {
 	return &form
 }
 
+func GetMemo(id int, userID string) (*Memo, int, error) {
+	var memo Memo
+	if err := DB.Where("id = ? AND user_id = ?", id, userID).First(&memo).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, http.StatusNotFound, errors.New("Memo not found")
+		}
+		return nil, http.StatusInternalServerError, err
+	}
+	return &memo, 0, nil
+}
+
 // メモ操作ルーティング
 func RegisterMemoRoutes(router *gin.Engine) {
 	// メモ取得
@@ -39,11 +52,11 @@ func RegisterMemoRoutes(router *gin.Engine) {
 
 	// メモ登録
 	router.POST("/api/memos", func(c *gin.Context) {
-		userID, _ := c.Get("user_id")
+		userID, _ := c.MustGet("user_id").(string)
 		var form MemoForm
 		c.ShouldBindJSON(&form)
 		memo := Memo{
-			UserID:    userID.(string),
+			UserID:    userID,
 			Title:     form.Title,
 			Content:   form.Content,
 			CreatedAt: time.Now(),
@@ -57,11 +70,11 @@ func RegisterMemoRoutes(router *gin.Engine) {
 
 	// メモ更新
 	router.PUT("/api/memos/:id", func(c *gin.Context) {
-		userID, _ := c.Get("user_id")
+		userID, _ := c.MustGet("user_id").(string)
 		id, _ := strconv.Atoi(c.Param("id"))
-		var memo Memo
-		if err := DB.Where("id = ? AND user_id = ?", id, userID).First(&memo).Error; err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "Memo not found"})
+		memo, status, err := GetMemo(id, userID)
+		if err != nil {
+			c.JSON(status, gin.H{"error": err.Error()})
 			return
 		}
 		var form MemoForm
@@ -77,11 +90,11 @@ func RegisterMemoRoutes(router *gin.Engine) {
 
 	// メモ削除
 	router.DELETE("/api/memos/:id", func(c *gin.Context) {
-		userID, _ := c.Get("user_id")
+		userID, _ := c.MustGet("user_id").(string)
 		id, _ := strconv.Atoi(c.Param("id"))
-		var memo Memo
-		if err := DB.Where("id = ? AND user_id = ?", id, userID).First(&memo).Error; err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "Memo not found"})
+		memo, status, err := GetMemo(id, userID)
+		if err != nil {
+			c.JSON(status, gin.H{"error": err.Error()})
 			return
 		}
 		if err := DB.Delete(&memo).Error; err != nil {
