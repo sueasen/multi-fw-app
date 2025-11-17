@@ -173,3 +173,38 @@
     # 停止/削除
     docker compose down
     ```
+
+## actix-web-app
+### 通常実行
+1.  Codespaces のターミナル開く
+2.  actix-web-app ディレクトリに移動
+    ```bash
+    cd actix-web-app
+    ```
+3.  Rust(Actix Web) 実行
+    ```bash
+    cargo run
+    ```
+4.  ビルドと起動が完了すると、コンソールに以下が表示
+    ```bash
+    Server running at http://0.0.0.0:8280
+    ```
+5.  Codespacesが自動的にポート8180を転送し、右下にポップアップが表示されるので「**ブラウザで開く**」をクリック
+6.  ブラウザで `https://xxxyyyzzz-8280.app.github.dev`（ポートで確認）にアクセス、ログイン画面が表示
+### docker-compose
+1.  Codespaces のターミナル開く
+2.  actix-web-app ディレクトリに移動
+    ```bash
+    cd actix-web-app
+    ```
+3.  docker compose を実行
+    ```bash
+    # ビルド＆起動
+    docker compose up --build -d
+    # 起動
+    docker compose up -d
+    # ログ確認
+    docker compose logs -f actix-web-app
+    # 停止/削除
+    docker compose down
+    ```
