@@ -208,3 +208,38 @@
     # 停止/削除
     docker compose down
     ```
+## next-app
+### 通常実行
+1.  Codespaces のターミナル開く
+2.  next-app ディレクトリに移動
+    ```bash
+    cd next-app
+    ```
+3.  Next.js 実行
+    ```bash
+    npm run dev
+    ```
+4.  ビルドと起動が完了すると、コンソールに以下が表示
+    ```bash
+    ▲ Next.js 16.0.4 (Turbopack)
+    - Local:         http://localhost:3000
+    ```
+5.  Codespacesが自動的にポート3000を転送し、右下にポップアップが表示されるので「**ブラウザで開く**」をクリック
+6.  ブラウザで `https://xxxyyyzzz-3000.app.github.dev`（ポートで確認）にアクセス、ログイン画面が表示
+### docker-compose
+1.  Codespaces のターミナル開く
+2.  next-app ディレクトリに移動
+    ```bash
+    cd next-app
+    ```
+3.  docker compose を実行
+    ```bash
+    # ビルド＆起動
+    docker compose up --build -d
+    # 起動
+    docker compose up -d
+    # ログ確認
+    docker compose logs -f next-app
+    # 停止/削除
+    docker compose down
+    ```
