@@ -1,0 +1,11 @@
+services:
+  spring-boot-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.multi
+    container_name: spring-boot-app
+    ports:
+      - "8080:8080"
+    env_file:
+      - ../.env.multi
+    restart: unless-stopped

@@ -16,8 +16,22 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    @Value("${frontend.url}")
+    private String frontendUrl;
+
     @Autowired
     private SupabaseAuthService supabaseAuthService;
+
+    /**
+     * リダイレクトURLを取得します
+     * @param uriBuilder URI構築
+     * @return リダイレクトURL
+     */
+    private String getRedirectUrl(UriComponentsBuilder uriBuilder) {
+        return !frontendUrl.isEmpty() 
+            ? UriComponentsBuilder.fromUriString(frontendUrl).replacePath("/").build().toUriString() 
+            : uriBuilder.replacePath("/").build().toUriString();
+    }
 
     /**
      * アカウント登録を行います
@@ -27,7 +41,7 @@ public class AuthController {
      */
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> register(@RequestBody AuthRequest request, UriComponentsBuilder uriBuilder) {
-        String redirectTo = uriBuilder.replacePath("/").build().toUriString();
+        String redirectTo = getRedirectUrl(uriBuilder);
         Map<String, Object> result = supabaseAuthService.signUp(request.getEmail(), request.getPassword(), redirectTo);
         return result.containsKey("id") 
                 ? ResponseEntity.ok(Map.of("message", "Registration successful. Please check your email for confirmation."))
@@ -76,7 +90,7 @@ public class AuthController {
      */
     @GetMapping("/oauth2/github")
     public void redirectToGitHub(HttpServletResponse response, UriComponentsBuilder uriBuilder) throws IOException {
-        String redirectTo = uriBuilder.replacePath("/").build().toUriString();
+        String redirectTo = getRedirectUrl(uriBuilder);
         String supabaseAuthGitHubUrl = supabaseAuthService.getGitHubSignInUrl(redirectTo);
         response.sendRedirect(supabaseAuthGitHubUrl);
     }
