@@ -1,0 +1,11 @@
+services:
+  flask-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.multi
+    container_name: flask-app
+    ports:
+      - "5000:5000"
+    env_file:
+      - ../.env.multi
+    restart: unless-stopped
