@@ -1,8 +1,8 @@
 'use client';
 
 export function getApiUrl(url: string) : string {
-  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-  return baseUrl ? new URL(url, baseUrl).toString() : url;
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL
+  return backendUrl ? new URL(url, backendUrl).toString() : url;
 }
 
 export async function apiFetch(
