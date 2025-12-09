@@ -24,7 +24,8 @@ type Memo = {
   user_id: string;
   title: string;
   content?: string;
-  createdAt: string;
+  createdAt?: string;
+  created_at?: string;
 };
 
 export default function MemosPage() {
@@ -202,7 +203,7 @@ export default function MemosPage() {
                 <>
                   <div className="flex justify-between items-start mb-2">
                     <Typography className="text-xs text-gray-500">
-                      {new Date(memo.createdAt).toLocaleString()}
+                      {new Date(memo.createdAt ?? memo.created_at ?? '').toLocaleString()}
                     </Typography>
                     <div>
                       <IconButton

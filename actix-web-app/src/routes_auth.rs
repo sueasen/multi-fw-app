@@ -6,6 +6,7 @@ use actix_web::{
 use serde::Deserialize;
 use log::info;
 use crate::supabase_auth_service;
+use crate::config::CONFIG;
 
 // ログイン入力フォーム
 #[derive(Deserialize)]
@@ -21,6 +22,16 @@ pub fn config(cfg: &mut web::ServiceConfig) {
         .service(get_user)
         .service(logout_user)
         .service(github_redirect);
+}
+
+// リダイレクトURL取得
+fn redirect_url(req: &HttpRequest) -> String {
+    info!("frontend_url={}", CONFIG.frontend_url);
+    if CONFIG.frontend_url.is_empty() {
+        base_host_url(&req)
+    } else {
+        format!("{}/", CONFIG.frontend_url)
+    }
 }
 
 // ベースホストURL取得
@@ -48,7 +59,7 @@ fn base_host_url(req: &HttpRequest) -> String {
 // アカウント登録
 #[post("/api/auth/register")]
 async fn register(req: HttpRequest, form: Json<AuthForm>) -> impl Responder {
-    let redirect_to = base_host_url(&req);
+    let redirect_to = redirect_url(&req);
     let (result, _) = supabase_auth_service::signup(&form.email, &form.password, &redirect_to).await;
 
     if result.get("id").is_some() {
@@ -101,7 +112,7 @@ async fn logout_user(req: HttpRequest) -> impl Responder {
 // GitHub認証リダイレクト
 #[get("/api/auth/oauth2/github")]
 async fn github_redirect(req: HttpRequest) -> impl Responder {
-    let redirect_to = base_host_url(&req);
+    let redirect_to = redirect_url(&req);
     let github_url = supabase_auth_service::get_github_signin_url(&redirect_to);
     HttpResponse::Found()
         .append_header(("Location", github_url))
