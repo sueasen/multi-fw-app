@@ -4,6 +4,9 @@ class Config:
     # サーバ設定
     SERVER_PORT = 5000
 
+    # フロントエンドURL
+    FRONTEND_URL = os.environ.get("FRONTEND_URL", "")
+
     # Supabase 通信設定
     SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
     SUPABASE_ANON_KEY = os.environ.get("SUPABASE_ANON_KEY", "")

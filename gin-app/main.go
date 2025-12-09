@@ -12,9 +12,14 @@ func main() {
 	// ルータ初期化
 	router := gin.Default()
 
+	// 許可オリジン
+	allowOrigins := []string{"*"}
+	if src.Config.FrontendURL != "" {
+		allowOrigins = []string{src.Config.FrontendURL}
+	}
 	// CORS設定
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:8080", "http://localhost:3000"},
+		AllowOrigins:     allowOrigins,
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"*"},
 		AllowCredentials: true,

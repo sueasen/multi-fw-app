@@ -1,5 +1,10 @@
 'use client';
 
+export function getApiUrl(url: string) : string {
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL
+  return backendUrl ? new URL(url, backendUrl).toString() : url;
+}
+
 export async function apiFetch(
   url: string,
   options: RequestInit = {},
@@ -9,8 +14,8 @@ export async function apiFetch(
     'Content-Type': 'application/json',
   };
   if (accessToken) headers['Authorization'] = `Bearer ${accessToken}`;
-  const response = await fetch(url, { ...options, headers });
 
+  const response = await fetch(getApiUrl(url), { ...options, headers });
   if ([401, 403].includes(response.status)) {
     localStorage.removeItem('user_session');
     alert('認証されてません。再度ログインしてください。');
