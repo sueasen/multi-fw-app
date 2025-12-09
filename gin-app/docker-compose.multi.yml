@@ -1,0 +1,11 @@
+services:
+  gin-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.multi
+    container_name: gin-app
+    ports:
+      - "8180:8180"
+    env_file:
+      - ../.env.multi
+    restart: unless-stopped
