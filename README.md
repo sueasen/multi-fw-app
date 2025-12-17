@@ -243,3 +243,26 @@
     # 停止/削除
     docker compose down
     ```
+
+# その他・コマンド
+## docker 確認・削除、システム容量確認
+```
+# 使用状況確認
+docker system df
+# 一括停止
+docker stop $(docker ps -a -q) 
+# 全体削除（整理）
+docker system prune -af
+# 停止コンテナ削除
+docker container prune -f
+# 未使用イメージ削除
+docker image prune -af
+# 未使用ボリューム削除
+docker volume prune -f
+# ビルドキャッシュ削除
+docker builder prune -af
+
+# システム容量確認
+df -h
+df -h /*
+```
